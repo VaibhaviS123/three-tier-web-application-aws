@@ -59,7 +59,7 @@ The EC2 instances were launched and configured manually. An Auto Scaling Group w
 
 ### Download Code from Github
 
-git clone https://github.com/vaibhavis123/aws-three-tier-web-app.git
+git clone https://github.com/vaibhavis123/three-tier-web-application-aws.git
 
 ### S3 Bucket Creation
 

@@ -641,7 +641,9 @@ In this section, we will configure an internet-facing Application Load Balancer 
 
    Select the correct network configuration for VPC and **public** subnets.
 
-   Select the security group we created for this internal ALB. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our **target group** that we just created, so select it from the dropdown, and create the load balancer.
+Select the **EALB Security Group** created for the internet-facing Application Load Balancer. Configure the listener on HTTP port 80, or HTTPS port 443 if TLS is configured. Select the web-tier target group as the default forwarding destination.
+
+Ensure that the EALB Security Group allows inbound traffic from the intended client IP ranges and outbound traffic to the web-tier targets on the required listener and health-check ports. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our **target group** that we just created, so select it from the dropdown, and create the load balancer.
 
 <img width="1915" height="920" alt="Screenshot 2026-10-19 005051" src="https://github.com/user-attachments/assets/f5b78c6f-958e-4ae2-9087-9d678dc985f4" />
 

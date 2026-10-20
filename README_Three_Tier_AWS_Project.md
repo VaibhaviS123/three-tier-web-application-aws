@@ -87,7 +87,6 @@ Now we will be building out the VPC networking components as well as security gr
 
 <img width="933" height="456" alt="Screenshot 2026-10-18 235322" src="https://github.com/user-attachments/assets/af0e5e05-bc43-4196-a1f1-04a9a325a417" />
 <img width="935" height="451" alt="Screenshot 2026-10-18 235352" src="https://github.com/user-attachments/assets/27c26a67-2dc9-434b-8adc-eef3311914bb" />
-![Uploading Screenshot 2026-10-18 235744.png…]()
 <img width="937" height="450" alt="Screenshot 2026-10-18 235744" src="https://github.com/user-attachments/assets/571141f8-2732-46ff-8eed-aca3ea8fa073" />
 
 #### Subnet Configuration
@@ -184,7 +183,6 @@ Configure the **Database Security Group** for Amazon RDS for MySQL. Allow inboun
    <img width="1917" height="901" alt="Screenshot 2026-10-19 001938" src="https://github.com/user-attachments/assets/50d38e03-8288-4806-a8c7-ebe201c2ce1b" />
 
 3. When adding subnets, make sure to add the subnets we created in each availability zone specificaly for our database layer. You may have to navigate back to the VPC dashboard and check to make sure you're selecting the correct subnet IDs.
-      ![Uploading Screenshot 2026-10-19 001938.png…]()
 
 ### Database Deployment – Amazon RDS for MySQL
 
@@ -321,33 +319,24 @@ The application-tier EC2 instance is configured to connect to Amazon RDS for MyS
 
    ```bash
    sudo yum install mysql -y
-   ```
-<img width="1885" height="1002" alt="Screenshot 2026-10-19 003245" src="https://github.com/user-attachments/assets/674aaeea-9083-4686-bf94-2616b4b1042a" />
+Connect to the RDS MySQL database using its endpoint and database username.
 
-2. Connect to the RDS MySQL database using its endpoint and database username.
+Bash
+mysql -h <RDS-ENDPOINT>  -u <DB-USERNAME> -p
+Enter the database password when prompted.
 
-   ```bash
-   mysql -h <RDS-ENDPOINT>  -u <DB-USERNAME> -p
-   ```
+Verify the database connection and execute the required SQL commands.
 
-3. Enter the database password when prompted.
+The Database Security Group allows inbound MySQL traffic on TCP port 3306 from the App Server Security Group.
 
-4. Verify the database connection and execute the required SQL commands.
+RDS MySQL Connectivity Screenshot
 
-The Database Security Group allows inbound MySQL traffic on TCP port **3306** from the App Server Security Group.
-
-**RDS MySQL Connectivity Screenshot**
-
-<img width="1917" height="910" alt="Screenshot 2026-10-19 003317" src="https://github.com/user-attachments/assets/a2a5dea9-1ae9-42b5-a938-faea736466ee" />
-
-
-### Configure the Database Schema
-
+Configure the Database Schema
 After connecting to RDS MySQL, create the application database and its required tables if they do not already exist.
 
 Example commands:
 
-```sql
+SQL
 CREATE DATABASE IF NOT EXISTS webappdb;
 
 USE webappdb;
@@ -363,88 +352,56 @@ INSERT INTO transactions (amount, description)
 VALUES (400, 'groceries');
 
 SELECT * FROM transactions;
-```
-
 These commands are examples of database initialization. Use the actual schema and data you created for your project, and avoid inserting duplicate test records if you have already populated the table.
 
+Configure the App Tier
+Configure the application database settings with the RDS endpoint, database name, username, and password.
 
-### Configure the App Tier
+Upload the application code to the private Amazon S3 bucket.
 
-1. Configure the application database settings with the RDS endpoint, database name, username, and password.
-2. Upload the application code to the private Amazon S3 bucket.
-3. Connect to the application server using Session Manager.
-4. Download the application files from the S3 bucket to the EC2 instance.
-5. Install the runtime, dependencies, and other components required by the backend application.
-6. Start the application and verify that it is running correctly.
+Connect to the application server using Session Manager.
+
+Download the application files from the S3 bucket to the EC2 instance.
+
+Install the runtime, dependencies, and other components required by the backend application.
+
+Start the application and verify that it is running correctly.
 
 The exact runtime and startup commands depend on the application code deployed in the project.
 
-**Application Deployment Screenshot**
+Application Deployment Screenshot
 
-<img width="1906" height="921" alt="Screenshot 2026-10-19 003433" src="https://github.com/user-attachments/assets/6a9ea708-aef1-4bb6-92a5-62e44bb01c20" />
-
-<img width="1905" height="961" alt="Screenshot 2026-10-19 003528" src="https://github.com/user-attachments/assets/ab629359-77d2-4229-869c-581c6f9de469" />
-<img width="1905" height="961" alt="Screenshot 2026-10-19 003528" src="https://github.com/user-attachments/assets/64da0249-bda7-4d75-843d-14360bd4d773" />
-<img width="1903" height="910" alt="Screenshot 2026-10-19 003605" src="https://github.com/user-attachments/assets/1702dc6c-bb20-40e5-a515-27c117ae421e" />
-<img width="1886" height="922" alt="Screenshot 2026-10-19 003622" src="https://github.com/user-attachments/assets/83d5b24b-2f92-4c5a-8d9c-8a42752a5299" />
-<img width="1917" height="902" alt="Screenshot 2026-10-19 003638" src="https://github.com/user-attachments/assets/d73b777e-eb5d-4631-aeb9-ba09a8e07f98" />
-
----
-
-### Internal Load Balancer Integration
-
+Internal Load Balancer Integration
 The application-tier EC2 instances are registered as targets of the internal Application Load Balancer. The internal load balancer distributes incoming requests across the registered targets according to its listener and target group configuration.
 
 Health checks are configured to determine whether the registered targets are healthy and eligible to receive traffic.
 
 The App Server Security Group allows application traffic from the Internal Load Balancer Security Group on the configured application port.
 
-**Internal Load Balancer and Target Group Screenshot**
+Internal Load Balancer and Target Group Screenshot
 
-<img width="1905" height="895" alt="Screenshot 2026-10-19 003708" src="https://github.com/user-attachments/assets/307aaf58-ac49-4799-bfea-609b65a75dbe" />
-
-
-<img width="1900" height="902" alt="Screenshot 2026-10-19 003716" src="https://github.com/user-attachments/assets/677f1607-7ec1-431d-aae4-85a2568afebe" />
-
-
-<img width="1901" height="890" alt="Screenshot 2026-10-19 003725" src="https://github.com/user-attachments/assets/cd46f2ca-0a4d-47ca-981d-c0a853346537" />
-
-
----
-
-### Application Tier Verification
-
+Application Tier Verification
 The application tier was configured manually by launching EC2 instances, installing the required software, retrieving the application code from Amazon S3, and configuring database connectivity.
 
 The instances are integrated with the internal Application Load Balancer to support request distribution across the registered application servers.
 
-
-
-### Test App Tier
-
+Test App Tier
 Now let's run a couple tests to see if our app is configured correctly and can retrieve data from the database.
 
 To hit out health check endpoint, copy this command into your SSM terminal. This is our simple health check endpoint that tells us if the app is simply running.
 
-```shell
+Shell
 curl http://localhost:4000/health
-```
-
 The response should looks like the following:
 
-```
 "This is the health check"
-```
-
 Next, test your database connection. You can do that by hitting the following endpoint locally:
 
-```bash
+Bash
 curl http://localhost:4000/transaction
-```
-
 You should see a response containing the test data we added earlier:
 
-```json
+JSON
 {
   "result": [
     { "id": 1, "amount": 400, "description": "groceries" },
@@ -453,236 +410,176 @@ You should see a response containing the test data we added earlier:
     { "id": 4, "amount": 10, "description": "brownies" }
   ]
 }
-```
-
 If you see both of these responses, then your networking, security, database and app configurations are correct.
 
-<b>Congrats! Your app layer is fully configured and ready to go. </b>
+Congrats! Your app layer is fully configured and ready to go.
 
-### Target Group
+Target Group
+While the AMI is being created, we can go ahead and create our target group to use with the load balancer. On the EC2 dashboard navigate to Target Groups under Load Balancing on the left hand side. Click on Create Target Group.
 
-1. While the AMI is being created, we can go ahead and create our target group to use with the load balancer. On the EC2 dashboard navigate to <b>Target Groups</b> under <b>Load Balancing</b> on the left hand side. Click on <b>Create Target Group</b>.
+The purpose of forming this target group is to use with our load blancer so it may balance traffic across our private app tier instances. Select Instances as the target type and give it a name.
 
-2. The purpose of forming this target group is to use with our load blancer so it may balance traffic across our private app tier instances. Select Instances as the target type and give it a name.
+Then, set the protocol to HTTP and the port to 4000. Remember that this is the port our Node.js app is running on. Select the VPC we've been using thus far, and then change the health check path to be /health. This is the health check endpoint of our app. Click Next.
 
-   Then, set the protocol to <b>HTTP</b> and the port to 4000. Remember that this is the port our Node.js app is running on. Select the VPC we've been using thus far, and then change the health check path to be <b>/health</b>. This is the health check endpoint of our app. Click <b>Next</b>.
+We are NOT going to register any targets for now, so just skip that step and create the target group.
 
-3. We are NOT going to register any targets for now, so just skip that step and create the target group.
+Internal Application Load Balancer
+In the EC2 console, navigate to Load Balancers under Load Balancing and click Create Load Balancer.
 
-### Internal Application Load Balancer
+Select Application Load Balancer.
 
-1. In the EC2 console, navigate to **Load Balancers** under **Load Balancing** and click **Create Load Balancer**.
-2. Select **Application Load Balancer**.
-3. Enter a suitable name for the load balancer and select **Internal** as the scheme, because it routes application requests from the web tier to the app tier.
-4. Select the project VPC and the appropriate private subnets in the required Availability Zones.
-5. Select the **IALB Security Group**. Ensure that it allows inbound HTTP traffic on port `80` from the **Web Server Security Group**.
-6. Configure an HTTP listener on port `80` and set its default forwarding action to the app-tier target group created earlier. The target group forwards requests to the application servers on port `4000`.
-7. Create the load balancer and wait until it becomes active.
-8. Register the app-tier EC2 instances with the target group if they have not already been registered. Verify that the instances become healthy before testing the application through the internal load balancer.
+Enter a suitable name for the load balancer and select Internal as the scheme, because it routes application requests from the web tier to the app tier.
 
-**Internal Load Balancer Configuration Screenshots this part**
+Select the project VPC and the appropriate private subnets in the required Availability Zones.
 
+Select the IALB Security Group. Ensure that it allows inbound HTTP traffic on port 80 from the Web Server Security Group.
 
-   <img width="1901" height="900" alt="Screenshot 2026-10-19 003754" src="https://github.com/user-attachments/assets/03f9d819-a8c9-4877-80f4-02aceb4ace6b" />
+Configure an HTTP listener on port 80 and set its default forwarding action to the app-tier target group created earlier. The target group forwards requests to the application servers on port 4000.
 
+Create the load balancer and wait until it becomes active.
 
-   Select the correct network configuration for VPC and private subnets.
+Register the app-tier EC2 instances with the target group if they have not already been registered. Verify that the instances become healthy before testing the application through the internal load balancer.
 
+Internal Load Balancer Configuration Screenshots this part
 
-   <img width="1916" height="908" alt="Screenshot 2026-10-19 003809" src="https://github.com/user-attachments/assets/ec31f43b-d97b-403e-93af-4bd81cb30dfc" />
+Select the correct network configuration for VPC and private subnets.
 
+Select the security group we created for this internal ALB. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our target group that we just created, so select it from the dropdown, and create the load balancer.
 
-   Select the security group we created for this internal ALB. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our <b>target group </b>that we just created, so select it from the dropdown, and create the load balancer.
-
-
-   <img width="1901" height="892" alt="Screenshot 2026-10-19 003830" src="https://github.com/user-attachments/assets/a0941613-b052-4365-95ea-2bd3ebc07f64" />
-
-
-
-## Web Tier Instance Deployment - Part 5
-
+Web Tier Instance Deployment - Part 5
 In this section we will deploy an EC2 instance for the web tier and make all necessary software configurations for the NGINX web server and React.js website.
 
-- Learning Objectives
-  - Update NGINX Configuration Files
-  - Create Web Tier Instance
-  - Configure Software Stack
+Learning Objectives
 
-### Update Config File
+Update NGINX Configuration Files
 
-Before we create and configure the web instances, open up the **application-code/nginx.conf** file from the repo we downloaded. Scroll down to **line 58** and replace `[INTERNAL-LOADBALANCER-DNS]` with your internal load balancer’s DNS entry. You can find this by navigating to your internal load balancer's details page.
+Create Web Tier Instance
 
+Configure Software Stack
 
-<img width="1893" height="992" alt="Screenshot 2026-10-19 003928" src="https://github.com/user-attachments/assets/de7fc58c-4ce4-4ed6-baf3-cb45bf1ba1f3" />
+Update Config File
+Before we create and configure the web instances, open up the application-code/nginx.conf file from the repo we downloaded. Scroll down to line 58 and replace [INTERNAL-LOADBALANCER-DNS] with your internal load balancer’s DNS entry. You can find this by navigating to your internal load balancer's details page.
 
+Then, upload this file and the application-code/web-tier folder to the s3 bucket you created for this project.
 
-<img width="1886" height="982" alt="Screenshot 2026-10-19 003939" src="https://github.com/user-attachments/assets/6b68bfbe-c8c4-4435-9d03-9caf6690b25b" />
+Web Instance Deployment
+Follow the same instance creation instructions we used for the App Tier instance in Part 3: App Tier Instance Deployment, with the exception of the subnet. We will be provisioning this instance in one of our public subnets. Make sure to select the correct network components, security group, and IAM role. This time, auto-assign a public ip on the Configure Instance Details page. Remember to tag the instance with a name so we can identify it more easily.
 
-Then, upload this file and the **application-code/web-tier** folder to the s3 bucket you created for this project.
+Then at the end, proceed without a key pair for this instance.
 
-### Web Instance Deployment
+Connect to Instance
+Configure Web Instance
+We now need to install all of the necessary components needed to run our front-end application. Again, start by installing NVM and node
 
-1. Follow the same instance creation instructions we used for the App Tier instance in **Part 3: App Tier Instance Deployment**, with the exception of the subnet. We will be provisioning this instance in one of our **public subnets**. Make sure to select the correct network components, security group, and IAM role. **This time, auto-assign a public ip** on the **Configure Instance Details page**. Remember to tag the instance with a name so we can identify it more easily.
+Bash
+curl -o- [https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh](https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh) | bash
+source ~/.bashrc
+nvm install 16
+nvm use 16
+Now we need to download our web tier code from our s3 bucket:
 
-  <img width="1893" height="902" alt="Screenshot 2026-10-19 003959" src="https://github.com/user-attachments/assets/d141841b-8677-46b8-9e64-31df11c9a882" />
+Bash
+cd ~/
+aws s3 cp s3://BUCKET_NAME/web-tier/ web-tier --recursive
+Navigate to the web-layer folder and create the build folder for the react app so we can serve our code:
 
+Bash
+cd ~/web-tier
+npm install
+npm run build
+NGINX can be used for different use cases like load balancing, content caching etc, but we will be using it as a web server that we will configure to serve our application on port 80, as well as help direct our API calls to the internal load balancer.
 
- <img width="1907" height="900" alt="Screenshot 2026-10-19 004017" src="https://github.com/user-attachments/assets/bf233774-ad54-4aeb-adc6-71c387c6bee8" />
+Bash
+sudo amazon-linux-extras install nginx1 -y
+We will now have to configure NGINX. Navigate to the Nginx configuration file with the following commands and list the files in the directory:
 
-   Then at the end, proceed without a key pair for this instance.
+Bash
+cd /etc/nginx
+ls
+You should see an nginx.conf file. We’re going to delete this file and use the one we uploaded to s3. Replace the bucket name in the command below with the one you created for this project:
 
-### Connect to Instance
+Bash
+sudo rm nginx.conf
+sudo aws s3 cp s3://BUCKET_NAME/nginx.conf .
+Then, restart Nginx with the following command:
 
+Bash
+sudo service nginx restart
+To make sure Nginx has permission to access our files execute this command:
 
-<img width="1917" height="901" alt="Screenshot 2026-10-19 004056" src="https://github.com/user-attachments/assets/28a48d47-eac9-401b-b364-81ee896d2869" />
+Bash
+chmod -R 755 /home/ec2-user
+And then to make sure the service starts on boot, run this command:
 
-### Configure Web Instance
+Bash
+sudo chkconfig nginx on
+Now when you plug in the public IP of your web tier instance, you should see your website, which you can find on the Instance details page on the EC2 dashboard. If you have the database connected and working correctly, then you will also see the database working. You’ll be able to add data. Careful with the delete button, that will clear all the entries in your database.
 
-1. We now need to install all of the necessary components needed to run our front-end application. Again, start by installing NVM and node
-
-   ```bash
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-   source ~/.bashrc
-   nvm install 16
-   nvm use 16
-   ```
-
-2. Now we need to download our web tier code from our s3 bucket:
-
-   ```bash
-   cd ~/
-   aws s3 cp s3://BUCKET_NAME/web-tier/ web-tier --recursive
-   ```
-
-   Navigate to the web-layer folder and create the build folder for the react app so we can serve our code:
-
-   ```bash
-   cd ~/web-tier
-   npm install
-   npm run build
-   ```
-
-3. NGINX can be used for different use cases like load balancing, content caching etc, but we will be using it as a web server that we will configure to serve our application on port 80, as well as help direct our API calls to the internal load balancer.
-   ```bash
-   sudo amazon-linux-extras install nginx1 -y
-   ```
-4. We will now have to configure NGINX. Navigate to the Nginx configuration file with the following commands and list the files in the directory:
-
-   ```bash
-   cd /etc/nginx
-   ls
-   ```
-
-   You should see an nginx.conf file. We’re going to delete this file and use the one we uploaded to s3. Replace the bucket name in the command below with the one you created for this project:
-
-   ```bash
-   sudo rm nginx.conf
-   sudo aws s3 cp s3://BUCKET_NAME/nginx.conf .
-   ```
-
-   Then, restart Nginx with the following command:
-
-   ```bash
-   sudo service nginx restart
-   ```
-
-   To make sure Nginx has permission to access our files execute this command:
-
-   ```bash
-   chmod -R 755 /home/ec2-user
-   ```
-
-   And then to make sure the service starts on boot, run this command:
-
-   ```bash
-   sudo chkconfig nginx on
-   ```
-
-5. Now when you plug in the public IP of your web tier instance, you should see your website, which you can find on the Instance details page on the EC2 dashboard. If you have the database connected and working correctly, then you will also see the database working. You’ll be able to add data. Careful with the delete button, that will clear all the entries in your database.
-
-<img width="1915" height="955" alt="Screenshot 2026-10-19 004110" src="https://github.com/user-attachments/assets/99cc2643-2ec4-4c6b-81d0-2844c24b15c5" />
-
-<img width="1911" height="956" alt="Screenshot 2026-10-19 004126" src="https://github.com/user-attachments/assets/b2628fc6-afff-4268-b805-d21f6aecf88f" />
-<img width="1892" height="906" alt="Screenshot 2026-10-19 004205" src="https://github.com/user-attachments/assets/f30c7cbc-e526-4f6a-9f7f-e5e363aad2f7" />
-<img width="1910" height="961" alt="Screenshot 2026-10-19 004406" src="https://github.com/user-attachments/assets/78543b2a-aa9b-4b01-b24b-6c41d270c323" />
-<img width="1910" height="926" alt="Screenshot 2026-10-19 004426" src="https://github.com/user-attachments/assets/bbfa8ec9-cb37-4be2-bc77-67aa011e4793" />
-<img width="1910" height="908" alt="Screenshot 2026-10-19 004512" src="https://github.com/user-attachments/assets/d582f38e-8ded-4929-a36b-0bc67c161524" />
-
-## External Load Balancer Deployment - Part 6
-
+External Load Balancer Deployment - Part 6
 In this section, we will configure an internet-facing Application Load Balancer (EALB) to route incoming client requests to the web-tier EC2 instance or instances. The load balancer uses a target group and health checks to determine which registered web servers are eligible to receive traffic. The web-tier EC2 instances are launched and configured manually; Auto Scaling is not implemented in this project.
 
-- Learning Objectives:
-  - Create a target group for the web tier.
-  - Configure an internet-facing Application Load Balancer.
-  - Configure listeners and forwarding rules.
-  - Verify web-tier target health and application access.
+Learning Objectives:
 
+Create a target group for the web tier.
 
-### Target Group
+Configure an internet-facing Application Load Balancer.
 
-1. Open the EC2 console and navigate to **Target Groups** under **Load Balancing** on the left-hand side. Click **Create target group**.
+Configure listeners and forwarding rules.
 
-2. Select **Instances** as the target type and provide a suitable name for the target group.
+Verify web-tier target health and application access.
 
-3. Set the protocol to **HTTP** and the port to `80`, because Nginx listens on port 80 on the web-tier EC2 instance. Select the VPC used for this project.
+Target Group
+Open the EC2 console and navigate to Target Groups under Load Balancing on the left-hand side. Click Create target group.
 
-4. Configure the health check path to `/` if it returns a successful HTTP response from your Nginx web server. Otherwise, use a path that returns a successful response.
+Select Instances as the target type and provide a suitable name for the target group.
 
-5. Register your web-tier EC2 instance or instances with the target group, then create the target group.
+Set the protocol to HTTP and the port to 80, because Nginx listens on port 80 on the web-tier EC2 instance. Select the VPC used for this project.
 
-### Internet Facing Load Balancer
+Configure the health check path to / if it returns a successful HTTP response from your Nginx web server. Otherwise, use a path that returns a successful response.
 
-1. On the left hand side of the EC2 dashboard select **Load Balancers** under **Load Balancing** and click **Create Load Balancer.**
+Register your web-tier EC2 instance or instances with the target group, then create the target group.
 
-2. We'll be using an **Application Load Balancer** for our HTTP traffic so click the create button for that option.
+Internet Facing Load Balancer
+On the left hand side of the EC2 dashboard select Load Balancers under Load Balancing and click Create Load Balancer.
 
-3. After giving the load balancer a name, select **Internet-facing** as the scheme, because this external load balancer receives incoming public traffic from users on the internet and routes it to the web tier.
+We'll be using an Application Load Balancer for our HTTP traffic so click the create button for that option.
 
-   Select the correct network configuration for VPC and **public** subnets.
+After giving the load balancer a name, select Internet-facing as the scheme, because this external load balancer receives incoming public traffic from users on the internet and routes it to the web tier.
 
-Select the **EALB Security Group** created for the internet-facing Application Load Balancer. Configure the listener on HTTP port 80, or HTTPS port 443 if TLS is configured. Select the web-tier target group as the default forwarding destination.
+Select the correct network configuration for VPC and public subnets.
 
-Ensure that the EALB Security Group allows inbound traffic from the intended client IP ranges and outbound traffic to the web-tier targets on the required listener and health-check ports. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our **target group** that we just created, so select it from the dropdown, and create the load balancer.
+Select the EALB Security Group created for the internet-facing Application Load Balancer. Configure the listener on HTTP port 80, or HTTPS port 443 if TLS is configured. Select the web-tier target group as the default forwarding destination.
 
-<img width="1915" height="920" alt="Screenshot 2026-10-19 005051" src="https://github.com/user-attachments/assets/f5b78c6f-958e-4ae2-9087-9d678dc985f4" />
+Ensure that the EALB Security Group allows inbound traffic from the intended client IP ranges and outbound traffic to the web-tier targets on the required listener and health-check ports. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our target group that we just created, so select it from the dropdown, and create the load balancer.
 
-### ** Congrats! You’ve Implemented a 3 Tier Web Architecture! **<br>
+ Congrats! You’ve Implemented a 3 Tier Web Architecture! 
 
-## Clean Up
-
+Clean Up
 In order to clean up the resources in the AWS account and avoid incurring any other charges, you'll want to delete the resources in a specific order. We will start with the different services deployed inside the VPC, and then the VPC components themselves:
 
+Application Load Balancers
 
-1. **Application Load Balancers**
+For each of the Application Load Balancers we created, start by deleting the listeners. Then, delete the load balancers by checking the box next to them, and then clicking delete under the Actions dropdown.
 
-   For each of the Application Load Balancers we created, start by deleting the listeners. Then, delete the load balancers by checking the box next to them, and then clicking delete under the Actions dropdown.
+Target Groups
 
-3. **Target Groups**
+Now that there's no Application Load Balancer dependency on target groups we can delete them. Navigate to Target Groups on the left hand side of the Ec2 dashboard. Select your target groups and click delete under the Actions dropdown.
 
-   Now that there's no Application Load Balancer dependency on target groups we can delete them. Navigate to Target Groups on the left hand side of the Ec2 dashboard. Select your target groups and click delete under the Actions dropdown.
+EC2 Instances
 
+Navigate to Instances under Instances in the left hand side of the EC2 dashboard. Select all instances and click Terminate Instance under the Instance State dropdown.
 
-4. ** EC2 Instances**
+RDS MySQL Database
 
-    Navigate to Instances under Instances in the left hand side of the EC2 dashboard. Select all instances and click Terminate Instance under the Instance State dropdown.
+To delete the database we created, navigate to the RDS service dashboard and select Databases[cite: 2].
 
-7. **RDS MySQL Database**
+Select your database instance, click the Actions dropdown, and choose Delete[cite: 2].
 
-   To delete the database we created, navigate to the RDS service dashboard and select **Databases**[cite: 2]. 
+Uncheck "Create a final snapshot" (or keep it if desired), check the acknowledgement box, type delete me if prompted, and confirm the deletion[cite: 2].
 
-   Select your database instance, click the **Actions** dropdown, and choose **Delete**[cite: 2].
+VPC
 
-   Uncheck "Create a final snapshot" (or keep it if desired), check the acknowledgement box, type `delete me` if prompted, and confirm the deletion[cite: 2].
+Lastly, delete the VPC by navigating to Your VPCs on the lefthand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups[cite: 2].
 
-12. **VPC**
-
-    Lastly, delete the VPC by navigating to Your VPCs on the lefthand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups[cite: 2].
-
-12. **VPC**
-
-    Lastly, delete the VPC by navigating to Your VPCs on the lefthand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups.
-
-## License
-
+License
 This library is licensed under the MIT-0 License. See the LICENSE file.

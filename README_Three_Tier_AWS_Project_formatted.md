@@ -2,6 +2,7 @@
 
 A hands-on AWS project demonstrating a three-tier web application using EC2, Application Load Balancers, Amazon RDS for MySQL, Amazon S3, and AWS Systems Manager Session Manager.
 
+
 ## Table of Contents
 
 - [Description](#description)
@@ -13,10 +14,11 @@ A hands-on AWS project demonstrating a three-tier web application using EC2, App
 - [Part 1: Networking and Security](#part-1-networking-and-security)
 - [Part 2: Database Deployment](#part-2-database-deployment)
 - [Part 3: Application Tier Deployment](#part-3-application-tier-deployment)
-- [Part 5: Web Tier Deployment](#part-5-web-tier-deployment)
-- [Part 6: External Load Balancer Deployment](#part-6-external-load-balancer-deployment)
+- [Part 4: Web Tier Deployment](#part-4-web-tier-deployment)
+- [Part 5: External Load Balancer Deployment](#part-5-external-load-balancer-deployment)
 - [Clean Up](#clean-up)
 - [License](#license)
+
 
 ## Description
 
@@ -184,10 +186,6 @@ Configure the **Database Security Group** for Amazon RDS for MySQL. Allow inboun
 ![Database Security Group](https://github.com/user-attachments/assets/1114adf8-28f2-4b9d-a18e-77f5d903baf2)
 
 ## Part 2: Database Deployment
-
-- Deploy Database Layer
-  - Subnet Groups
-  - Multi-AZ Database
 
 ### Subnet Groups
 
@@ -571,11 +569,6 @@ Then, upload this file and the **application-code/web-tier** folder to the s3 bu
    sudo service nginx restart
    ```
 
-   To make sure Nginx has permission to access our files execute this command:
-
-   ```bash
-   chmod -R 755 /home/ec2-user
-   ```
 
    And then to make sure the service starts on boot, run this command:
 
@@ -635,35 +628,43 @@ Ensure that the EALB Security Group allows inbound traffic from the intended cli
 
 ## Clean Up
 
-In order to clean up the resources in the AWS account and avoid incurring any other charges, you'll want to delete the resources in a specific order. We will start with the different services deployed inside the VPC, and then the VPC components themselves:
+To avoid unnecessary AWS charges, delete the resources created for this project when they are no longer needed.
+
+Follow this order to remove the main resources and their dependencies:
 
 1. **Application Load Balancers**
 
-   For each of the Application Load Balancers we created, start by deleting the listeners. Then, delete the load balancers by checking the box next to them, and then clicking delete under the Actions dropdown.
+   Delete the external and internal Application Load Balancers after confirming they are no longer needed.
 
-3. **Target Groups**
+2. **Target Groups**
 
-   Now that there's no Application Load Balancer dependency on target groups we can delete them. Navigate to Target Groups on the left hand side of the Ec2 dashboard. Select your target groups and click delete under the Actions dropdown.
+   Delete the target groups once they are no longer associated with active load balancer configurations.
 
-4. ** EC2 Instances**
+3. **EC2 Instances**
 
-    Navigate to Instances under Instances in the left hand side of the EC2 dashboard. Select all instances and click Terminate Instance under the Instance State dropdown.
+   Terminate the web-tier and application-tier EC2 instances.
 
-7. **RDS MySQL Database**
+4. **Amazon RDS for MySQL**
 
-   To delete the database we created, navigate to the RDS service dashboard and select **Databases**.
+   Delete the RDS database if you no longer need it. Create a final snapshot first if you need to preserve the data.
 
-   Select your database instance, click the **Actions** dropdown, and choose **Delete**.
+5. **NAT Gateway**
 
-   Uncheck "Create a final snapshot" (or keep it if desired), check the acknowledgement box, type `delete me` if prompted, and confirm the deletion.
+   Delete the NAT Gateway if one was created for this project. Release its associated Elastic IP address when it is no longer needed.
 
-12. **VPC**
+6. **VPC and Networking Resources**
 
-    Lastly, delete the VPC by navigating to Your VPCs on the left-hand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups.
+   After removing dependent resources, delete the project VPC if it is no longer required. Check for remaining dependencies, such as subnets, route tables, security groups, and Internet Gateway attachments.
 
-12. **VPC**
+7. **S3 Bucket**
 
-    Lastly, delete the VPC by navigating to Your VPCs on the left-hand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups.
+   Delete the project S3 bucket and its contents if they are no longer required.
+
+8. **IAM Role**
+
+   Remove the EC2 IAM role and its associated instance profile if they were created specifically for this project and are no longer in use.
+
+**Important:** Check the AWS console for remaining resources before finishing cleanup. Deleting these resources is irreversible in some cases, so back up any data or files you want to keep.
 
 ## License
 

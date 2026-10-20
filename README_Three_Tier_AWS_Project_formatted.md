@@ -625,6 +625,9 @@ Ensure that the EALB Security Group allows inbound traffic from the intended cli
 ![Screenshot 2026-10-19 005051](https://github.com/user-attachments/assets/f5b78c6f-958e-4ae2-9087-9d678dc985f4)
 
 ### Congrats! You’ve Implemented a 3 Tier Web Architecture!
+<img width="1405" height="716" alt="Untitled Design (1)" src="https://github.com/user-attachments/assets/4e46845e-01f2-48fe-bf84-8b7de7470494" />
+<img width="1408" height="752" alt="Untitled Design" src="https://github.com/user-attachments/assets/cd291265-52b3-4f95-8c15-538bc8c40673" />
+
 
 ## Clean Up
 

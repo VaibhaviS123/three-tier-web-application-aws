@@ -637,7 +637,7 @@ In this section, we will configure an internet-facing Application Load Balancer 
 
 2. We'll be using an **Application Load Balancer** for our HTTP traffic so click the create button for that option.
 
-3. After giving the load balancer a name, be sure to select **internet facing** since this one will not be public facing, but rather it will route traffic from our web tier to the app tier.
+3. After giving the load balancer a name, be sure to select **internal** since this one will not be public facing, but rather it will route traffic from our web tier to the app tier.
 
    Select the correct network configuration for VPC and **public** subnets.
 

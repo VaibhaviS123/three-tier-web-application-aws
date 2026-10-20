@@ -486,7 +486,7 @@ If you see both of these responses, then your networking, security, database and
 
 ![Screenshot 2026-10-19 003830](https://github.com/user-attachments/assets/a0941613-b052-4365-95ea-2bd3ebc07f64)
 
-## Part 5: Web Tier Deployment
+## Part 4: Web Tier Deployment
 
 In this section we will deploy an EC2 instance for the web tier and make all necessary software configurations for the NGINX web server and React.js website.
 
@@ -586,7 +586,7 @@ Then, upload this file and the **application-code/web-tier** folder to the s3 bu
 ![Screenshot 2026-10-19 004426](https://github.com/user-attachments/assets/bbfa8ec9-cb37-4be2-bc77-67aa011e4793)
 ![Screenshot 2026-10-19 004512](https://github.com/user-attachments/assets/d582f38e-8ded-4929-a36b-0bc67c161524)
 
-## Part 6: External Load Balancer Deployment
+## Part 5: External Load Balancer Deployment
 
 In this section, we will configure an internet-facing Application Load Balancer (EALB) to route incoming client requests to the web-tier EC2 instance or instances. The load balancer uses a target group and health checks to determine which registered web servers are eligible to receive traffic. The web-tier EC2 instances are launched and configured manually; Auto Scaling is not implemented in this project.
 

@@ -87,8 +87,8 @@ Now we will be building out the VPC networking components as well as security gr
 
 <img width="933" height="456" alt="Screenshot 2026-10-18 235322" src="https://github.com/user-attachments/assets/af0e5e05-bc43-4196-a1f1-04a9a325a417" />
 <img width="935" height="451" alt="Screenshot 2026-10-18 235352" src="https://github.com/user-attachments/assets/27c26a67-2dc9-434b-8adc-eef3311914bb" />
-<img width="937" height="450" alt="Screenshot 2026-10-18 235744" src="https://github.com/user-attachments/assets/571141f8-2732-46ff-8eed-aca3ea8fa073" />
 ![Uploading Screenshot 2026-10-18 235744.png…]()
+<img width="937" height="450" alt="Screenshot 2026-10-18 235744" src="https://github.com/user-attachments/assets/571141f8-2732-46ff-8eed-aca3ea8fa073" />
 
 #### Subnet Configuration
 
@@ -465,7 +465,7 @@ If you see both of these responses, then your networking, security, database and
 
 2. The purpose of forming this target group is to use with our load blancer so it may balance traffic across our private app tier instances. Select Instances as the target type and give it a name.
 
-   Then, set the protocol to <b>HTTP</b> and the port to 4000. Remember that this is the port our Node.ja app is running on. Select the VPC we've been using thus far, and then change the health check path to be <b>/health</b>. This is the health check endpoint of our app. Click <b>Next</b>.
+   Then, set the protocol to <b>HTTP</b> and the port to 4000. Remember that this is the port our Node.js app is running on. Select the VPC we've been using thus far, and then change the health check path to be <b>/health</b>. This is the health check endpoint of our app. Click <b>Next</b>.
 
 3. We are NOT going to register any targets for now, so just skip that step and create the target group.
 
@@ -637,7 +637,7 @@ In this section, we will configure an internet-facing Application Load Balancer 
 
 2. We'll be using an **Application Load Balancer** for our HTTP traffic so click the create button for that option.
 
-3. After giving the load balancer a name, be sure to select **internal** since this one will not be public facing, but rather it will route traffic from our web tier to the app tier.
+3. After giving the load balancer a name, select **Internet-facing** as the scheme, because this external load balancer receives incoming public traffic from users on the internet and routes it to the web tier.
 
    Select the correct network configuration for VPC and **public** subnets.
 
@@ -646,7 +646,6 @@ Select the **EALB Security Group** created for the internet-facing Application L
 Ensure that the EALB Security Group allows inbound traffic from the intended client IP ranges and outbound traffic to the web-tier targets on the required listener and health-check ports. Now, this ALB will be listening for HTTP traffic on port 80. It will be forwarding the traffic to our **target group** that we just created, so select it from the dropdown, and create the load balancer.
 
 <img width="1915" height="920" alt="Screenshot 2026-10-19 005051" src="https://github.com/user-attachments/assets/f5b78c6f-958e-4ae2-9087-9d678dc985f4" />
-
 
 ### ** Congrats! You’ve Implemented a 3 Tier Web Architecture! **<br>
 
@@ -670,11 +669,15 @@ In order to clean up the resources in the AWS account and avoid incurring any ot
 
 7. **RDS MySQL Database**
 
-   To delete the database we created, navigate to the RDS service dashboard. We need to make sure that deletion protection is off. Do this by selecting the regional cluster and clicking the **Modify** button. Scroll all the way down and you should be able to uncheck deletion protection if it is checked.
+   To delete the database we created, navigate to the RDS service dashboard and select **Databases**[cite: 2]. 
 
-   On the next screen, select **Apply Immidiately** and then click **Modify Cluster**.
+   Select your database instance, click the **Actions** dropdown, and choose **Delete**[cite: 2].
 
-   Now we can delete the reader and writer nodes separately. To do that, select one of them and click **delete** from the Actions dropdown. You'll have to type **delete me** into the resulting pop-up. Repeat for the other database instance. For the last instance the pop up with ask to create a snapshot. Don't do this and check off the acknowledgement.
+   Uncheck "Create a final snapshot" (or keep it if desired), check the acknowledgement box, type `delete me` if prompted, and confirm the deletion[cite: 2].
+
+12. **VPC**
+
+    Lastly, delete the VPC by navigating to Your VPCs on the lefthand side of the VPC dashboard. Select the VPC that we created for this lab, and under the Actions dropdown click Delete VPC. This will also delete the subnets and security groups[cite: 2].
 
 12. **VPC**
 
